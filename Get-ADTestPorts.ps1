@@ -22,10 +22,10 @@
         foreach ($port in $ports) {
             $result = Test-NetConnection -ComputerName $dc -Port $port -WarningAction SilentlyContinue
             if ($result.TcpTestSucceeded) {
-                Write-Host "Connection to $dc on port $port is successful." -ForegroundColor Green
+                Write-Host "Connection to $dc on port $port is successful."
             }
             else {
-                Write-Host "Connection to $dc on port $port failed." -ForegroundColor Red
+                Write-Host "Connection to $dc on port $port failed."
             }
         }
         Write-Output ""

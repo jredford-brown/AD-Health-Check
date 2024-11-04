@@ -36,7 +36,7 @@ function Get-LdapsCertificate {
         $tcpClient.Close()
 
     } catch {
-        Write-Output "Error retrieving LDAPS certificate: $_"
+        Write-Output "Error retrieving LDAPS certificate: $_.ScriptStackTrace"
     }
 }
 
