@@ -8,13 +8,16 @@
         foreach ($dc in $dcs) {
             $interfaces = Get-WmiObject -Class Win32_NetworkAdapterConfiguration -ComputerName $dc.HostName -Filter "IPEnabled = True"
             foreach ($interface in $interfaces) {
-                $result = [PSCustomObject]@{
-                    DomainController = $dc.Name
-                    IPAddress        = $interface.IPAddress
-                    Domain           = $domain
-                    InterfaceIndex   = $interface.InterfaceIndex
-                    DNSAddresses     = $interface.DNSServerSearchOrder -join ", "
-                    Forwarders       = "N/A" #Placeholder
+                try {
+                    $result = [PSCustomObject]@{
+                        DomainController = $dc.Name
+                        IPAddress        = $interface.IPAddress
+                        Domain           = $domain
+                        InterfaceIndex   = $interface.InterfaceIndex
+                        DNSAddresses     = $interface.DNSServerSearchOrder -join ", "
+                        Forwarders       = "N/A" #Placeholder
+                    }
+                catch [continue]
                 }
                 $results += $result
             }
