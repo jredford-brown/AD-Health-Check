@@ -17,8 +17,7 @@
                         DNSAddresses     = $interface.DNSServerSearchOrder -join ", "
                         Forwarders       = "N/A" #Placeholder
                     }
-                catch [continue]
-                }
+                } catch {continue}
                 $results += $result
             }
             try {
