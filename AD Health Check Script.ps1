@@ -50,7 +50,7 @@ try {
     )
     
     foreach ($test in $dcdiagTests) {
-        $output = dcdiag /a /v $test.Command /s:$hostName
+        $output = $test.Command /a /v /s:$hostName
         Write-Host "$($test.Heading)`n$output"
     }
     Write-Output ""
