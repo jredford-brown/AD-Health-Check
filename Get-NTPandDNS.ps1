@@ -2,6 +2,7 @@
     $ntpSettings = Get-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\W32Time\Parameters"
     $ntpServer = $ntpSettings.NtpServer
     $type = $ntpSettings.Type
+    $ipConfig = Get-NetIPConfiguration -InterfaceAlias $nic.InterfaceAlias
 
     Write-Host "=== NTP Configuration ==="
     Write-Output "NTP Server: $ntpServer"
