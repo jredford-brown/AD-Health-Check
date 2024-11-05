@@ -6,7 +6,6 @@ try {
     Import-Module $scriptDir\Get-NTPandDNS.ps1
     Import-Module $scriptDir\Get-DNSLatency.ps1
     Import-Module $scriptDir\Get-SitesServices.ps1
-    Import-Module $scriptDir\Set-HealthCheckResults.ps1
     Import-Module ActiveDirectory
 }
 catch {
