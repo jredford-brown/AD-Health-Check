@@ -36,21 +36,21 @@ catch {
 
 try {
     $dcdiagTests = @(
-        [PSCustomObject]@{ Command = "dcdiag /test:dns"; Heading = "=== DNS Test ===" }
-        [PSCustomObject]@{ Command = "dcdiag /test:machineaccount"; Heading = "=== Machine Account Test ===" }
-        [PSCustomObject]@{ Command = "dcdiag /test:services"; Heading = "=== Services Test ===" }
-        [PSCustomObject]@{ Command = "dcdiag /test:netlogons"; Heading = "=== Netlogons Test ===" }
-        [PSCustomObject]@{ Command = "dcdiag /test:replications"; Heading = "=== Replications Test ===" }
-        [PSCustomObject]@{ Command = "dcdiag /test:fsmocheck"; Heading = "=== FSMO Check Test ===" }
-        [PSCustomObject]@{ Command = "dcdiag /test:advertising"; Heading = "=== Self Advertising Test ===" }
-        [PSCustomObject]@{ Command = "dcdiag /test:CheckSDRefDom"; Heading = "=== Security Descriptor Test ===" }
-        [PSCustomObject]@{ Command = "dcdiag /test:CheckSecurityError /ReplSource"; Heading = "=== Security Test ===" }
-        [PSCustomObject]@{ Command = "dcdiag /test:Connectivity"; Heading = "=== DSA Test ===" }
-        [PSCustomObject]@{ Command = "dcdiag /test:cutoffservers"; Heading = "=== Isolated DC Test ===" }
+        [PSCustomObject]@{ Command = "dcdiag /test:dns /a /v /s:$hostName"; Heading = "=== DNS Test ===" }
+        [PSCustomObject]@{ Command = "dcdiag /test:machineaccount /a /v /s:$hostName"; Heading = "=== Machine Account Test ===" }
+        [PSCustomObject]@{ Command = "dcdiag /test:services /a /v /s:$hostName"; Heading = "=== Services Test ===" }
+        [PSCustomObject]@{ Command = "dcdiag /test:netlogons /a /v /s:$hostName"; Heading = "=== Netlogons Test ===" }
+        [PSCustomObject]@{ Command = "dcdiag /test:replications /a /v /s:$hostName"; Heading = "=== Replications Test ===" }
+        [PSCustomObject]@{ Command = "dcdiag /test:fsmocheck /a /v /s:$hostName"; Heading = "=== FSMO Check Test ===" }
+        [PSCustomObject]@{ Command = "dcdiag /test:advertising /a /v /s:$hostName"; Heading = "=== Self Advertising Test ===" }
+        [PSCustomObject]@{ Command = "dcdiag /test:CheckSDRefDom /a /v /s:$hostName"; Heading = "=== Security Descriptor Test ===" }
+        [PSCustomObject]@{ Command = "dcdiag /test:CheckSecurityError /ReplSource /a /v /s:$hostName"; Heading = "=== Security Test ===" }
+        [PSCustomObject]@{ Command = "dcdiag /test:Connectivity /a /v /s:$hostName"; Heading = "=== DSA Test ===" }
+        [PSCustomObject]@{ Command = "dcdiag /test:cutoffservers /a /v /s:$hostName"; Heading = "=== Isolated DC Test ===" }
     )
     
     foreach ($test in $dcdiagTests) {
-        $output = $test.Command /a /v /s:$hostName
+        $output = $test.Command
         Write-Host "$($test.Heading)`n$output"
     }
     Write-Output ""
