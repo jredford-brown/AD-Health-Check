@@ -2,17 +2,15 @@
     $forest = Get-ADForest
     $domains = $forest.Domains
     $results = @()
-    $ipConfig = Get-NetIPConfiguration -InterfaceAlias $nic.InterfaceAlias
 
     foreach ($domain in $domains) {
         $dcs = Get-ADDomainController -Filter * -Server $domain
-
         foreach ($dc in $dcs) {
             $interfaces = Get-WmiObject -Class Win32_NetworkAdapterConfiguration -ComputerName $dc.HostName -Filter "IPEnabled = True"
             foreach ($interface in $interfaces) {
                 $result = [PSCustomObject]@{
                     DomainController = $dc.Name
-                    IPAddress        = $ipConfig.IPv4Address.IPAddress
+                    IPAddress        = $interface.IPAddress
                     Domain           = $domain
                     InterfaceIndex   = $interface.InterfaceIndex
                     DNSAddresses     = $interface.DNSServerSearchOrder -join ", "
