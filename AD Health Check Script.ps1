@@ -16,7 +16,7 @@ try {
     $query = "www.bing.com"
     $sitesAndHosts = Get-ADDomainController -Filter *
     $hostName = [System.Net.Dns]::GetHostEntry($env:computerName).HostName
-    $transcriptPath = "${env}Active Directory Health Check - $(Get-Date -Format "ddMMyy.HHmm").txt"
+    $transcriptPath = "$scriptDir\Active Directory Health Check - $(Get-Date -Format "ddMMyy.HHmm").txt"
 }
 catch {
     Write-Warning "An error occured during variable data collection. $_.ScriptStackTrace"
@@ -27,7 +27,7 @@ Start-Transcript -Path $transcriptPath -NoClobber
 try {
     Write-Host "=== System Information ==="
     Get-ADEthernetForwarderConfiguration
-    Get-NTPandDNS
+    Get-NTP
     Write-Output ""
 }
 catch {
@@ -36,24 +36,30 @@ catch {
 
 try {
     $dcdiagTests = @(
-        [PSCustomObject]@{ Command = "dcdiag /test:dns /a /v /s:$hostName"; Heading = "=== DNS Test ===" }
-        [PSCustomObject]@{ Command = "dcdiag /test:machineaccount /a /v /s:$hostName"; Heading = "=== Machine Account Test ===" }
-        [PSCustomObject]@{ Command = "dcdiag /test:services /a /v /s:$hostName"; Heading = "=== Services Test ===" }
-        [PSCustomObject]@{ Command = "dcdiag /test:netlogons /a /v /s:$hostName"; Heading = "=== Netlogons Test ===" }
-        [PSCustomObject]@{ Command = "dcdiag /test:replications /a /v /s:$hostName"; Heading = "=== Replications Test ===" }
-        [PSCustomObject]@{ Command = "dcdiag /test:fsmocheck /a /v /s:$hostName"; Heading = "=== FSMO Check Test ===" }
-        [PSCustomObject]@{ Command = "dcdiag /test:advertising /a /v /s:$hostName"; Heading = "=== Self Advertising Test ===" }
-        [PSCustomObject]@{ Command = "dcdiag /test:CheckSDRefDom /a /v /s:$hostName"; Heading = "=== Security Descriptor Test ===" }
-        [PSCustomObject]@{ Command = "dcdiag /test:CheckSecurityError /ReplSource /a /v /s:$hostName"; Heading = "=== Security Test ===" }
-        [PSCustomObject]@{ Command = "dcdiag /test:Connectivity /a /v /s:$hostName"; Heading = "=== DSA Test ===" }
-        [PSCustomObject]@{ Command = "dcdiag /test:cutoffservers /a /v /s:$hostName"; Heading = "=== Isolated DC Test ===" }
+        [PSCustomObject]@{ Command = "dcdiag /test:dns /a"; Heading = "=== DNS Test ===" }
+        [PSCustomObject]@{ Command = "dcdiag /test:machineaccount /a"; Heading = "=== Machine Account Test ===" }
+        [PSCustomObject]@{ Command = "dcdiag /test:services /a"; Heading = "=== Services Test ===" }
+        [PSCustomObject]@{ Command = "dcdiag /test:netlogons /a"; Heading = "=== Netlogons Test ===" }
+        [PSCustomObject]@{ Command = "dcdiag /test:replications /a"; Heading = "=== Replications Test ===" }
+        [PSCustomObject]@{ Command = "dcdiag /test:fsmocheck /a"; Heading = "=== FSMO Check Test ===" }
+        [PSCustomObject]@{ Command = "dcdiag /test:advertising /a"; Heading = "=== Self Advertising Test ===" }
+        [PSCustomObject]@{ Command = "dcdiag /test:CheckSDRefDom /a"; Heading = "=== Security Descriptor Test ===" }
+        [PSCustomObject]@{ Command = "dcdiag /test:CheckSecurityError /a"; Heading = "=== Security Test ===" }
+        [PSCustomObject]@{ Command = "dcdiag /test:Connectivity /a"; Heading = "=== DSA Test ===" }
+        [PSCustomObject]@{ Command = "dcdiag /test:cutoffservers /a"; Heading = "=== Isolated DC Test ===" }
     )
     
     foreach ($test in $dcdiagTests) {
-        $output = $test.Command
-        Write-Host "$($test.Heading)`n$output"
+        $output = Invoke-Expression -Command $test.Command
+        Write-Host "$($test.Heading)"
+        $outputLines = $output -split "`n"
+        foreach ($line in $outputLines) {
+            if (![string]::IsNullOrWhiteSpace($line)) {
+                Write-Output "$line"
+            }
+        }
+        Write-Output ""
     }
-    Write-Output ""
 }
 catch {
     Write-Warning "An error occured while performing domain health checks. $_.ScriptStackTrace"
