@@ -6,28 +6,33 @@
     foreach ($domain in $domains) {
         $dcs = Get-ADDomainController -Filter * -Server $domain
         foreach ($dc in $dcs) {
-            $interfaces = Get-WmiObject -Class Win32_NetworkAdapterConfiguration -ComputerName $dc.HostName -Filter "IPEnabled = True"
-            foreach ($interface in $interfaces) {
-                try {
-                    $result = [PSCustomObject]@{
+            try {
+                $interfaces = Get-WmiObject -Class Win32_NetworkAdapterConfiguration -ComputerName $dc.HostName -Filter "IPEnabled = True" -ErrorAction Stop
+                foreach ($interface in $interfaces) {
+                    $ipAddresses = if ($interface.IPAddress) { $interface.IPAddress -join ", " } else { "N/A" }
+                    $results += [PSCustomObject]@{
                         DomainController = $dc.Name
-                        IPAddress        = $interface.IPAddress
+                        IPAddress        = $ipAddresses
                         Domain           = $domain
-                        InterfaceIndex   = $interface.InterfaceIndex
                         DNSAddresses     = $interface.DNSServerSearchOrder -join ", "
                         Forwarders       = "N/A" #Placeholder
                     }
-                } catch {continue}
-                $results += $result
+                    #$results += $result
+                }
+            }
+            catch {
+                Write-Warning "Unable to retrieve network configuration for $($dc.Name). $_"
+                continue
             }
             try {
                 $forwarders = Get-DnsServerForwarder -ComputerName $dc.HostName -ErrorAction Stop
                 $forwarderAddresses = $forwarders.IPAddress -join ", "
-            } catch {
+            }
+            catch {
                 $forwarderAddresses = "DNS Server role not installed"
             }
-            foreach ($res in $results | Where-Object { $_.DomainController -eq $dc.Name }) {
-                $res.Forwarders = $forwarderAddresses
+            foreach ($result in $results | Where-Object { $_.DomainController -eq $dc.Name }) {
+                $result.Forwarders = $forwarderAddresses
             }
         }
     }
